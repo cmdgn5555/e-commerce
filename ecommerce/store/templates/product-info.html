@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block title %}Store{% endblock %}
+
+{% block content %}
+<div class="row row-cols-1 row-cols-md-3 g-4">
+    <div class="col-4">
+        <img src="{{ product_info.image }}" class="img-fluid mx-auto d-block" alt="">
+    </div>
+    <div class="col-8">
+        <div class="card">
+            <div class="card-body">
+                <p class="card-text"><strong>Title: </strong> {{ product_info.title |capfirst }}</p>
+                <p class="card-text"><strong>Description: </strong> {{ product_info.description}}</p>
+                <p class="card-text"><strong>Brand: </strong> {{ product_info.brand |capfirst }}</p>
+                <p class="card-text"><strong>Price: </strong> {{ product_info.price }}</p>
+                <p class="card-text"><strong>Category Name: </strong> {{ product_info.category__name }}</p>
+                <p class="card-text">
+                    <strong>Quantity </strong>
+                    <select id="select">
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                    </select>
+                </p>
+            </div>
+            <div class="card-footer">
+                <button type="button" id="add_button" value="{{ product_info.id }}" class="btn btn-sm btn-success float-end">
+                    <i class="fa fa-shopping-basket" aria-hidden="true"></i> &nbsp; Add to cart
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    //Add Button
+    $(document).on('click', '#add_button', function(e){
+        e.preventDefault();
+
+        $.ajax({
+            type: 'POST',
+            url: '{% url "cart-add" %}',
+            data: {
+                product_id: $('#add_button').val(),
+                product_quantity: $('#select option:selected').text(),
+                csrfmiddlewaretoken: "{{ csrf_token }}",
+                action: 'POST'
+            },
+
+            success: function(json){
+                console.log(json),
+                document.getElementById("cart-qty").textContent = json.qty
+            },
+            error: function(err){
+                console.log(err)
+            }
+        });
+    });
+
+</script>
+
+
+
+
+{% endblock %}

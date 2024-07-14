@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block title %}
+    Profile Management
+{% endblock %}
+
+{% block content %}
+<div class="row mt-5">
+    <div class="col-3"></div>
+    <div class="col-6">
+        <div class="card">
+            <div class="card-header">
+                <h2 class="card-title">Manage Your Account</h2>
+            </div>
+            <form method="POST">
+                {% csrf_token %}
+                <div class="card-body">
+                    {{ user_form }}
+                </div>
+                <div class="card-footer">
+                    <button type="submit" class="btn btn-sm btn-success float-end ms-2 me-2">Update</button>
+                    <a href="{% url 'delete-account' %}" class="btn btn-sm btn-danger float-end ms-2 me-2">Delete Account</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

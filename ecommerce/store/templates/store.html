@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block title %}Store{% endblock %}
+
+{% block content %}
+<h1>All Product</h1>
+<hr><br><br>
+<div class="row row-cols-1 row-cols-md-3 g-4">
+    {% for product in all_products %}
+    <div class="col">
+        <div class="card h-100">
+            <img src="media/{{ product.image }}" class="card-img-top" alt="...">
+            <div class="card-body">
+                <h5 class="card-title"><strong>Title: </strong>{{ product.title | capfirst }}</h5>
+                <p class="card-text"><strong>Price: </strong>{{ product.price }}</p>
+                <a href="{% url 'product-info' product.slug %}" class="btn btn-sm btn-success float-end">Detail</a>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

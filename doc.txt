@@ -1,0 +1,188 @@
+
+1. pip install django
+
+2. django-admin startproject ecommerce
+
+3. cd ecommerce => python manage.py runserver
+
+4. cd ecommerce => django-admin startapp store
+
+5. ecommerce => settings.py => INSTALLED_APPS listesine 'store' register et.
+
+6. store => models.py içerisinde 'model' codefirst yaklaşımına göre dizayn edilir.
+
+7. model'i veritabanına göç ettirlim
+    7.1. python manage.py makemigrations
+    7.2. python manage.py migrate
+
+8. static dosyalar için ayarlamaları yapalım
+    8.1. ecomemrce => static adında bir directory açalım
+    8.2. ecommerce => static => css, js ve media klasörlerini açalım
+    8.3. ecommerce => settings.py dosyasına aşağıdaki kodları ekleyin.
+        STATIC_URL = '/static/'
+        STATICFILES_DIRS = [BASE_DIR / 'static']
+        MEDIA_URL = '/media/'
+        MEDIA_ROOT = BASE_DIR / 'static/media'
+    8.4. ecommerce => urls.py dosyasına aşağıdaki kodları ekleyin
+        from django.conf.urls.static import static
+        from django.conf import settings
+
+        urlpatterns = [
+            path('admin/', admin.site.urls),
+        ]
+        urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+9. ecommerce => store => admin.py dosyasına aşağıdaki kodları yazın
+    from django.contrib import admin
+    from .models import Category, Product
+
+
+    class CategoryAdmin(admin.ModelAdmin):
+        prepopulated_fields = {
+            'slug': ('name',)
+        }
+
+        fields = ['name', 'slug']
+
+
+    class ProductAdmin(admin.ModelAdmin):
+        prepopulated_fields = {
+            'slug': ('title',)
+        }
+
+        fields = ['title', 'slug', 'description', 'price', 'image', 'category', 'brand']
+
+
+    admin.site.register(Category, CategoryAdmin)
+    admin.site.register(Product, ProductAdmin)
+
+10. admin tarafına gişir için user yaratalım
+    10.1. python manage.py createsuperuser
+        Username (leave blank to use 'burak'): beast
+        Email address: beast@mail.com
+        Password: 123  # not: password gözükmemektedir. dikkatli olun....!
+        Password (again): 123
+        This password is too short. It must contain at least 8 characters.
+        This password is too common.
+        This password is entirely numeric.
+        Bypass password validation and create user anyway? [y/N]: y
+
+
+11. store => template klasörü açalım
+
+12. store => template => base.html açalım
+
+13. store => template => _navbar.html açalım ve bu base.html include edelim.
+
+14. store => views.py => store() fonksiyonu yazılır.
+
+15. store => urls.py yaratılır.
+
+16. ecommerce => urls.py dosyasına 'store/urls.py' include edilir.
+
+17. store => templates => store.html açılır.
+
+18. store => views.py => categories() fonksiyonunu yazın
+
+19. ecommerce => settings.py => TEMPLATE[] listesine "categories()" register et.
+
+20. store => templates => _navbar.html'de dropdown menüyü organize et.
+
+21. store => views.py => list_category() fonksiyonunu yaz
+
+22. store => urls.py => list_category ekle
+
+23. store => templates => list_category.html ekle
+
+24. store => views.py => product_info() fonsiyonunu yaz
+
+25. store => urls.py => path('product/<slug:product_slug>', views.product_info, name='product-info') ekle
+
+26. store => templates => product-info.html yarat.
+
+27. account app yarat
+    27.1 python manage.py startapp account
+    27.2. ecommerce => settings.py => INSTALLED_APPS listesine 'account' register et.
+
+28. account => forms.py dosyası açılır.
+
+29. acoount => views.py => register(), my_login(), user_logout(), profile_management(), delete_account(), dashboard() fonksiyonları yaz.
+
+30. account => urls.py dosyası aç. aşağıdaki kodları yaz.
+
+    from django.urls import path
+    from . import views
+
+
+    urlpatterns = [
+        path('register/', views.register, name='register'),
+
+        path('my_login/', views.my_login, name='my_login'),
+
+        path('user-logout/', views.user_logout, name='user_logout'),
+
+        path('dashboard/', views.dashboard, name='dashboard'),
+
+        path('profile_management/', views.profile_management, name='profile-management'),
+
+        path('delete-account/', views.delete_account, name='delete-account')
+    ]
+
+    30.1 ecommerce => urls.py içerisine include et.
+
+31. account => templates klasörü açılır.
+
+32. account => templates => register.html açılır.
+
+33. account => templates => my-login.html açılır.
+
+34. account => templates => dashboard.html açılır.
+
+35. store => templates => _navbar.html aşağıdaki değişikliği yap
+
+                {% if user.is_authenticated %}
+                  <li class="nav-item">
+                      <a href="{% url 'dashboard' %}" class="btn btn-sm btn-success float-end" type="button">
+                          <i class="fa fa-home" aria-hidden="true">&nbsp; Dashboard</i>
+                      </a>
+                  </li>
+                  <li class="nav-item">
+                      <a href="{% url 'user_logout' %}" class="btn btn-sm btn-danger ms-2 me-2 float-end" type="button">
+                          <i class="fa fa-sign-out" aria-hidden="true">&nbsp; Logout</i>
+                      </a>
+                  </li>
+                {% else %}
+                  <li class="nav-item">
+                      <a href="{% url 'my_login' %}" class="btn btn-sm btn-success float-end" type="button">
+                          <i class="fa fa-sign-in" aria-hidden="true">&nbsp; Sign In</i>
+                      </a>
+                  </li>
+                  <li class="nav-item">
+                      <a href="{% url 'register' %}" class="btn btn-sm btn-info ms-2 me-2 float-end" type="button">
+                          <i class="fa fa-user-plus" aria-hidden="true">&nbsp; Sign Up</i>
+                      </a>
+                  </li>
+                {% endif %}
+
+
+36. cart app eklenir
+    36.1. python manage.py startapp cart
+    36.2. ecommerce => settings.py => INSTALLED_APPS listesine "cart" register et.
+    36.3. cart => cart.py file oluşturun.
+    36.4. cart => context_processor.py dosyası açın
+    36.5. ecommerce => settings.py => TEMPLATES[] içerisine "cart.context_processor.cart" ekleyin.
+    36.6. store => _navbar.html içerisinde 'cart' için değişiklik yapın
+    36.7. cart => views.py => cart_summary() fonksiyonunu yazın.
+    36.8. cart => urls.py dosyası açılır.
+    36.9. ecommerce => urls.py => cart include edilir.
+    36.10. cart => templates klasörü açılır.
+    36.11. cart => templates => cart-summary.html yaratılır.
+    36.12. cart => views.py => cart_add(), cart_delete(), cart_update() fonksiyonları yazılır.
+    36.13. cart => urls.py => add, update ve delete path() fonksiyonları eklenir.
+    36.14. store => templates => product-info.html sayfasına ajax kodları yazılır.
+
+
+
+
+
+

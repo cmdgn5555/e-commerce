@@ -1,0 +1,73 @@
+<nav class="navbar navbar-expand-lg bg-body-tertiary">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="{% url 'store' %}">Store</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+                aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                    <a class="nav-link active" aria-current="page" href="{% url 'store' %}">Home</a>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
+                       aria-expanded="false">
+                        Categories
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="{% url 'store' %}">All</a></li>
+                        {% for category in model %}
+                        <li>
+                            <a class="dropdown-item" href="{% url 'list-category' category.slug %}">
+                                {{ category.name | capfirst }}
+                            </a>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </li>
+
+                {% if user.is_authenticated %}
+                  <li class="nav-item">
+                      <a href="{% url 'dashboard' %}" class="btn btn-sm btn-success float-end" type="button">
+                          <i class="fa fa-home" aria-hidden="true">&nbsp; Dashboard</i>
+                      </a>
+                  </li>
+                  <li class="nav-item">
+                      <a href="{% url 'user_logout' %}" class="btn btn-sm btn-danger ms-2 me-2 float-end" type="button">
+                          <i class="fa fa-sign-out" aria-hidden="true">&nbsp; Logout</i>
+                      </a>
+                  </li>
+                {% else %}
+                  <li class="nav-item">
+                      <a href="{% url 'my_login' %}" class="btn btn-sm btn-success float-end" type="button">
+                          <i class="fa fa-sign-in" aria-hidden="true">&nbsp; Sign In</i>
+                      </a>
+                  </li>
+                  <li class="nav-item">
+                      <a href="{% url 'register' %}" class="btn btn-sm btn-info ms-2 me-2 float-end" type="button">
+                          <i class="fa fa-user-plus" aria-hidden="true">&nbsp; Sign Up</i>
+                      </a>
+                  </li>
+                {% endif %}
+
+                &nbsp; &nbsp; &nbsp;
+
+                <li class="nav-item">
+                    <a href="{% url 'cart_summary' %}" class="btn btn-sm btn-secondary float-end ms-2 me-2">
+                        <i class="fa fa-shopping-cart" aria-hidden="true">&nbsp;</i>
+                        <div id="cart-qty" class="d-inline-flex">
+                            {% with qty_amount=cart|length %}
+                                {% if qty_amount > 0 %}
+                                    {{ qty_amount }}
+                                {% else %}
+                                    0
+                                {% endif %}
+                            {% endwith %}
+                        </div>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
